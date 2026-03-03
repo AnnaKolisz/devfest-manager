@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, linkedSignal } from '@angular/core';
 
 @Component({
   selector: 'app-event-card',
@@ -34,14 +34,12 @@ import { Component, computed, input } from '@angular/core';
       }
            }
         </div>
-
-        <!-- TODO Mod 1: Add Title Input -->
         <h3 class="text-xl font-bold text-gray-800 my-2">{{ title() }}</h3>
-
         <div class="flex justify-between items-center mt-4">
-          <!-- TODO Mod 1: Add Derived State (Like Button) -->
-          <button class="text-gray-400 hover:text-red-500 transition-colors cursor-pointer">
-            ♡ Like
+          <button (click)="toggleFavorite()" 
+          [class.text-red-500]="isFavorited()"
+          class="text-gray-400 hover:text-red-500 transition-colors cursor-pointer">
+           {{ isFavorited() ? '♥' : '♡' }} Like
           </button>
 
           <!-- TODO Mod 1: Add Output -->
@@ -59,6 +57,11 @@ export class EventCard {
   title = input.required<string>();
   image = input.required<string>();
   date = input<string>();
+  initialLiked = input(false);
+
+  isFavorited = linkedSignal(() => {
+    return this.initialLiked();
+  });
 
   daysUntil = computed(() => {
     const eventDate = this.date();
@@ -69,4 +72,8 @@ export class EventCard {
     const diffTime = target.getTime() - now.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   });
+
+  toggleFavorite() {
+    this.isFavorited.update((val) => !val);
+  }
 }
