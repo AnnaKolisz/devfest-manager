@@ -1,6 +1,7 @@
 import { HttpClient, httpResource } from '@angular/common/http';
 import { inject, Injectable, Signal } from '@angular/core';
 import { DevFestEvent } from '../models/event.model';
+import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -30,5 +31,11 @@ export class EventsService {
 
     deleteEvent(id: string) {
         return this.http.delete(`${this.apiUrl}/${id}`)
+    }
+
+    createEvent(event: Omit<DevFestEvent, 'id'>): Observable<DevFestEvent> {
+
+
+        return this.http.post<DevFestEvent>(this.apiUrl, event);
     }
 }
